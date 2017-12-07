@@ -1,4 +1,4 @@
-Web-Component-Tester-Istanbul
+WCT-istanbub
 =============================
 
 Istanbul coverage plugin for web-component-tester.
@@ -9,7 +9,7 @@ your project on each test run.
 ## Installation
 
 ```sh
-npm install web-component-tester-istanbul --save-dev
+npm install wct-istanbub --save-dev
 ```
 
 ## Basic Usage
@@ -21,7 +21,7 @@ Add the following configuration to web-component-tester's config file.
 ```js
 module.exports = {
   plugins: {
-    istanbul: {
+    istanbub: {
       dir: "./coverage",
       reporters: ["text-summary", "lcov"],
       include: [
@@ -74,7 +74,7 @@ tests.
 ```js
 module.exports = {
   plugins: {
-    istanbul: {
+    istanbub: {
       dir: "./coverage",
       reporters: ["text-summary", "lcov"],
       include: [
