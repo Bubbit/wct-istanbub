@@ -6,6 +6,8 @@ Istanbul coverage plugin for web-component-tester.
 Use this plugin to collect and report test coverage (via istanbul) for
 your project on each test run.
 
+In order to use this coverage plugin use at least version 6.4.0 of web-component-tester
+
 ## Installation
 
 ```sh
