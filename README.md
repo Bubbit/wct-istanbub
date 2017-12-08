@@ -8,6 +8,8 @@ your project on each test run.
 
 In order to use this coverage plugin use at least version 6.4.0 of web-component-tester
 
+Check out this test repository for an [example](https://github.com/Bubbit/polymerTesting) with 'app' and [travis](https://travis-ci.org/Bubbit/polymerTesting) build  
+
 ## Installation
 
 ```sh
