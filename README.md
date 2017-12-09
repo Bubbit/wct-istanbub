@@ -69,6 +69,10 @@ then the test run will fail, even if all tests passed.
 
 This requires specifying the `thresholds` option for the plugin
 
+### writeOnlyOnSuccess `false`
+
+Set to `true` to write coverage only if all tests pass  
+
 ### Example
 
 The following configuration will cause the test run to fail if less
