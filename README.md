@@ -32,8 +32,8 @@ module.exports = {
         "**/*.js"
       ],
       exclude: [
-        "/polymer/polymer.js",
-        "/platform/platform.js"
+        "/polymer/polymer.html",
+        "/platform/platform.html"
       ]
     }
   }
@@ -86,11 +86,11 @@ module.exports = {
       dir: "./coverage",
       reporters: ["text-summary", "lcov"],
       include: [
-        "**/*.js"
+        "**/*.html"
       ],
       exclude: [
-        "/polymer/polymer.js",
-        "/platform/platform.js"
+        "/polymer/polymer.html",
+        "/platform/platform.html"
       ],
       thresholds: {
         global: {
