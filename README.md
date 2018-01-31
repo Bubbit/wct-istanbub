@@ -29,11 +29,10 @@ module.exports = {
       dir: "./coverage",
       reporters: ["text-summary", "lcov"],
       include: [
-        "**/*.js"
+        "**/*.html"
       ],
       exclude: [
-        "/polymer/polymer.html",
-        "/platform/platform.html"
+        "**/test/**",
       ]
     }
   }
@@ -60,6 +59,9 @@ Files to include in instrumentation.
 
 Files to exclude from instrumentation (this trumps files 'included' with
 the option above).
+
+By default the '**/test/**' is excluded as istanbub crashes on some of the test tooling used by most projects
+and testing the coverage of your test files is not really useful.
 
 ## Coverage Thresholds
 
@@ -89,8 +91,7 @@ module.exports = {
         "**/*.html"
       ],
       exclude: [
-        "/polymer/polymer.html",
-        "/platform/platform.html"
+        "**/test/**
       ],
       thresholds: {
         global: {
