@@ -1,6 +1,6 @@
 {
   "name": "wct-istanbub",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "Instanbul coverage reporting for projects being tested by web-component-tester",
   "main": "lib/plugin.js",
   "scripts": {
@@ -25,7 +25,7 @@
   "dependencies": {
     "express": "^4.16.2",
     "html-script-hook": "^0.10.0",
-    "istanbub": "0.4.5",
+    "istanbub": "^0.4.6",
     "istanbul-threshold-checker": "^0.1.0",
     "lodash": "^4.0.0",
     "minimatch": "^3.0.0",
