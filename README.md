@@ -32,7 +32,7 @@ module.exports = {
         "**/*.html"
       ],
       exclude: [
-        "**/test/**",
+        "**/test/**"
       ]
     }
   }
@@ -91,7 +91,7 @@ module.exports = {
         "**/*.html"
       ],
       exclude: [
-        "**/test/**
+        "**/test/**"
       ],
       thresholds: {
         global: {
