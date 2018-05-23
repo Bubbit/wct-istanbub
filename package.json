@@ -1,6 +1,6 @@
 {
   "name": "wct-istanbub",
-  "version": "0.2.0-pre.2",
+  "version": "0.2.0-pre.3",
   "description": "Instanbuljs coverage reporting for projects being tested by web-component-tester",
   "main": "lib/plugin.js",
   "scripts": {
@@ -16,7 +16,15 @@
     "coverage",
     "wct"
   ],
-  "author": "Dane O'Connor",
+  "author": "Remco Gubbels",
+  "contributors": [
+    {
+      "name": "Dane O'Connor"
+    },
+    {
+      "name": "Jimi van der Woning"
+    }
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Bubbit/wct-istanbub/issues"
@@ -28,16 +36,14 @@
     "html-script-hook": "^0.10.0",
     "istanbul-api": "^1.3.1",
     "istanbul-lib-coverage": "^1.2.0",
-    "istanbul-lib-hook": "^1.1.0",
     "istanbul-lib-instrument": "^1.10.1",
     "istanbul-lib-report": "^1.1.3",
     "istanbul-lib-source-maps": "^1.2.3",
-    "istanbul-reports": "^1.3.0",
-    "istanbul-threshold-checker": "^0.1.0",
-    "lodash": "^4.0.0",
     "merge-source-map": "^1.1.0",
     "minimatch": "^3.0.0",
-    "parseurl": "^1.3.0"
+    "parseurl": "^1.3.0",
+    "polymer-build": "^3.0.1",
+    "polyserve": "^0.27.11"
   },
   "wct-plugin": {
     "cli-options": {
