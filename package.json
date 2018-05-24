@@ -1,10 +1,10 @@
 {
   "name": "wct-istanbub",
-  "version": "0.2.0-pre.3",
+  "version": "0.2.0-pre.4",
   "description": "Instanbuljs coverage reporting for projects being tested by web-component-tester",
   "main": "lib/plugin.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc --reporter=lcov --reporter=text mocha"
   },
   "repository": {
     "type": "git",
@@ -65,5 +65,11 @@
         "full": "include"
       }
     }
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "nyc": "^11.8.0",
+    "sinon": "^5.0.8"
   }
 }
