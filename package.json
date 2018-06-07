@@ -1,6 +1,6 @@
 {
   "name": "wct-istanbub",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Instanbuljs coverage reporting for projects being tested by web-component-tester",
   "main": "lib/plugin.js",
   "scripts": {
