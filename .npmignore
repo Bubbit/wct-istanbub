@@ -1,0 +1,5 @@
+# Ignore test files as they are not relevant for publishing
+test
+node_modules
+coverage
+.nyc_output

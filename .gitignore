@@ -4,3 +4,6 @@
 node_modules
 package-lock.json
 yarn.lock
+coverage
+.nyc_output
+.DS_Store
