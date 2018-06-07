@@ -53,7 +53,7 @@ An array of istanbul reporters to use.
 
 ### include
 
-Files to include in instrumentation.
+Files to include in instrumentation, default the basepath will be added - /components/${packagename}/{includepaths}
 
 ### exclude
 
@@ -62,6 +62,12 @@ the option above).
 
 By default the '**/test/**' is excluded as istanbub crashes on some of the test tooling used by most projects
 and testing the coverage of your test files is not really useful.
+
+default the basepath will be added - /components/${packagename}/{excludepaths}
+
+### ignoreBasePath
+
+Don't add the basepath to the include & exclude array's for specific use-cases
 
 ## Coverage Thresholds
 
