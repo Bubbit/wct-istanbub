@@ -26,7 +26,6 @@ Add the following configuration to web-component-tester's config file.
 module.exports = {
   plugins: {
     istanbub: {
-      dir: "./coverage",
       reporters: ["text-summary", "lcov"],
       include: [
         "**/*.html"
@@ -42,10 +41,6 @@ module.exports = {
 ## Options
 
 Below are the available configuration options:
-
-### dir
-
-The directory to write coverage reports to.
 
 ### reporters
 
@@ -64,6 +59,16 @@ By default the '**/test/**' is excluded as istanbub crashes on some of the test 
 and testing the coverage of your test files is not really useful.
 
 default the basepath will be added - /components/${packagename}/{excludepaths}
+
+### configFile
+
+Path to an Istanbul configuration file.
+
+### configOverrides
+
+Overrides for the default Istanbul configuration. Check the
+[default configuration](https://github.com/istanbuljs/istanbuljs/blob/master/packages/istanbul-api/lib/config.js) for
+all available options.
 
 ### ignoreBasePath
 

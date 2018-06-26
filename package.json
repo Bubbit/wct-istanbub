@@ -1,6 +1,6 @@
 {
   "name": "wct-istanbub",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Instanbuljs coverage reporting for projects being tested by web-component-tester",
   "main": "lib/plugin.js",
   "scripts": {
@@ -53,9 +53,10 @@
         "full": "reporters",
         "list": true
       },
-      "dir": {
-        "help": "Coverage directory",
-        "full": "dir"
+      "configFile": {
+        "help": "Istanbul configuration file",
+        "full": "config-file",
+        "metavar": "PATH"
       },
       "exclude": {
         "help": "Scripts to exclude from testing",
