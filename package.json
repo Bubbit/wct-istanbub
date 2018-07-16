@@ -44,8 +44,7 @@
     "parseurl": "^1.3.0",
     "polymer-build": "^3.0.1",
     "polyserve": "^0.27.11",
-    "web-component-tester": "^6.6.0",
-    "@babel/plugin-syntax-import-meta": "^7.0.0-beta.46"
+    "web-component-tester": "^6.6.0"
   },
   "wct-plugin": {
     "cli-options": {
