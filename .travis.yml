@@ -1,0 +1,11 @@
+language: node_js
+node_js: lts/*
+install: npm i
+cache:
+  directories:
+    - node_modules
+jobs:
+  include:
+    - stage: test
+      name: "Test"
+      script: npm test
