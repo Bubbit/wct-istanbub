@@ -1,9 +1,10 @@
 language: node_js
 node_js: lts/*
-install: npm i
-cache:
-  directories:
-    - node_modules
+install: npm install
+# TODO: investigate why this causes issues
+# cache:
+#   directories:
+#     - node_modules
 jobs:
   include:
     - stage: test
