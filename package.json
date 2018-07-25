@@ -4,7 +4,7 @@
   "description": "Instanbuljs coverage reporting for projects being tested by web-component-tester",
   "main": "lib/plugin.js",
   "scripts": {
-    "test": "nyc --reporter=lcov --reporter=text mocha"
+    "test": "npx nyc --reporter=lcov --reporter=text mocha"
   },
   "repository": {
     "type": "git",
