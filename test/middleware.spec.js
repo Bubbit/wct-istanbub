@@ -5,9 +5,13 @@ const polymerBuild = require('polymer-build');
 const fs = require('fs');
 
 describe('Middleware', () => {
+  afterEach(() => {
+    middleware.cacheClear();
+  });
+
   describe('generic', () => {
     it('should by default exclude **/test/**', (done) => {
-      const server = middleware.middleware('', { include: ['**'] }, {
+      const server = middleware.middleware('', { include: ['**'], packageName: 'wct-istanbub' }, {
         emit: (logLevel, title, message, value) => {
           assert.equal(message, 'skip      ');
           assert.equal(value, '/components/wct-istanbub/test/fake.js');
@@ -18,7 +22,7 @@ describe('Middleware', () => {
     });
 
     it('should not instrument blacklisted requests', (done) => {
-      const server = middleware.middleware('', { include: ['**'], exclude: ['noinclude.js'] }, {
+      const server = middleware.middleware('', { include: ['**'], exclude: ['noinclude.js'], packageName: 'wct-istanbub' }, {
         emit: (logLevel, title, message, value) => {
           assert.equal(message, 'skip      ');
           assert.equal(value, '/components/wct-istanbub/noinclude.js');
@@ -29,7 +33,7 @@ describe('Middleware', () => {
     });
 
     it('should not instrument non-whitelisted requests', (done) => {
-      const server = middleware.middleware('', { include: ['src/**'] }, {
+      const server = middleware.middleware('', { include: ['src/**'], packageName: 'wct-istanbub' }, {
         emit: (logLevel, title, message, value) => {
           assert.equal(message, 'skip      ');
           assert.equal(value, '/components/wct-istanbub/noinclude.js');
@@ -40,7 +44,7 @@ describe('Middleware', () => {
     });
 
     it('should not instrument a file if no whitelist is given', (done) => {
-      const server = middleware.middleware('', {}, {
+      const server = middleware.middleware('', { packageName: 'wct-istanbub' }, {
         emit: (logLevel, title, message, value) => {
           assert.equal(message, 'skip      ');
           assert.equal(value, '/components/wct-istanbub/include.js');
@@ -51,7 +55,7 @@ describe('Middleware', () => {
     });
 
     it('should instrument whitelisted requests with a globbing pattern', (done) => {
-      const server = middleware.middleware('', { include: ['**'] }, {
+      const server = middleware.middleware('', { include: ['**'], packageName: 'wct-istanbub' }, {
         emit: (logLevel, title, message, value) => {
           assert.equal(message, 'instrument');
           assert.equal(value, '/components/wct-istanbub/include.js');
@@ -62,7 +66,7 @@ describe('Middleware', () => {
     });
 
     it('should properly allow includes with / in the includes path', (done) => {
-      const server = middleware.middleware('', { include: ['/include.js'] }, {
+      const server = middleware.middleware('', { include: ['/include.js'], packageName: 'wct-istanbub' }, {
         emit: (logLevel, title, message, value) => {
           assert.equal(message, 'instrument');
           assert.equal(value, '/components/wct-istanbub/include.js');
@@ -73,7 +77,7 @@ describe('Middleware', () => {
     });
 
     it('should properly allow includes without / in the includes path', (done) => {
-      const server = middleware.middleware('', { include: ['include.js'] }, {
+      const server = middleware.middleware('', { include: ['include.js'], packageName: 'wct-istanbub' }, {
         emit: (logLevel, title, message, value) => {
           assert.equal(message, 'instrument');
           assert.equal(value, '/components/wct-istanbub/include.js');
@@ -84,7 +88,7 @@ describe('Middleware', () => {
     });
 
     it('should properly allow excludes with / in the excludes path', (done) => {
-      const server = middleware.middleware('', { include: ['**'], exclude: ['/noinclude.js'] }, {
+      const server = middleware.middleware('', { include: ['**'], exclude: ['/noinclude.js'], packageName: 'wct-istanbub' }, {
         emit: (logLevel, title, message, value) => {
           assert.equal(message, 'skip      ');
           assert.equal(value, '/components/wct-istanbub/noinclude.js');
@@ -95,7 +99,7 @@ describe('Middleware', () => {
     });
 
     it('should properly allow excludes without / in the excludes path', (done) => {
-      const server = middleware.middleware('', { include: ['**'], exclude: ['noinclude.js'] }, {
+      const server = middleware.middleware('', { include: ['**'], exclude: ['noinclude.js'], packageName: 'wct-istanbub' }, {
         emit: (logLevel, title, message, value) => {
           assert.equal(message, 'skip      ');
           assert.equal(value, '/components/wct-istanbub/noinclude.js');
@@ -106,7 +110,7 @@ describe('Middleware', () => {
     });
 
     it('should not add the basepath to includes & excludes if ignoreBasePath is set', (done) => {
-      const server = middleware.middleware('', { ignoreBasePath: true, include: ['/include.js'], exclude: ['noinclude.js'] }, {
+      const server = middleware.middleware('', { ignoreBasePath: true, include: ['/include.js'], exclude: ['noinclude.js'], packageName: 'wct-istanbub' }, {
         emit: (logLevel, title, message, value) => {
           assert.equal(message, 'skip      ');
           assert.equal(value, '/components/wct-istanbub/include.js');
@@ -117,7 +121,7 @@ describe('Middleware', () => {
     });
 
     it('should not instrument a JSON and matches the includes', (done) => {
-      const server = middleware.middleware('', { include: ['test/mocks/bower.json'], exclude: [] }, {
+      const server = middleware.middleware('', { include: ['test/mocks/bower.json'], exclude: [], packageName: 'wct-istanbub' }, {
         emit: () => { },
         options: { clientOptions: { root: '/components/' } }
       });
@@ -130,11 +134,17 @@ describe('Middleware', () => {
 
     it('should save the file in cache', (done) => {
       const mockFile = fs.readFileSync('test/mocks/mockJS.js', 'utf8');
-      // mock FS
-      const fsExistStub = sinon.stub(fs, 'existsSync').callsFake((file) => { if (file === '/include.js') { return true; } else { return false; } });
-      const fsReadFileStub = sinon.stub(fs, 'readFileSync').callsFake(() => { return mockFile; });
 
-      const server = middleware.middleware('', { npm: true, include: ['/include.js'] }, {
+      // mock FS
+      const fsExistStub = sinon.stub(fs, 'existsSync');
+      fsExistStub.withArgs('test/mocks/include.js').returns(true);
+      fsExistStub.returns(false);
+
+      const fsReadFileStub = sinon.stub(fs, 'readFileSync');
+      fsReadFileStub.withArgs('test/mocks/include.js').returns(mockFile);
+      fsReadFileStub.callThrough();
+
+      const server = middleware.middleware('test/mocks', { npm: true, include: ['/include.js'] }, {
         emit: () => { },
         options: { clientOptions: { root: '/components/' } }
       });
@@ -144,8 +154,8 @@ describe('Middleware', () => {
       }, {
           type: () => { },
           send: () => { 
-            assert.isTrue(fsExistStub.calledTwice);
-            assert.isTrue(fsReadFileStub.calledTwice);
+            sinon.assert.calledTwice(fsExistStub);
+            sinon.assert.calledOnce(fsReadFileStub.withArgs('test/mocks/include.js'));
           }
         }, () => { });
       server({
@@ -154,8 +164,8 @@ describe('Middleware', () => {
       }, {
           type: () => { },
           send: (response) => {
-            assert.isTrue(fsExistStub.calledThrice);
-            assert.isTrue(fsReadFileStub.calledTwice);
+            sinon.assert.calledThrice(fsExistStub);
+            sinon.assert.calledOnce(fsReadFileStub.withArgs('test/mocks/include.js'));
             fsExistStub.restore();
             fsReadFileStub.restore();
             done();
@@ -186,10 +196,15 @@ describe('Middleware', () => {
     it('should instrument the file correctly', (done) => {
       const mockFile = fs.readFileSync('test/mocks/mockJS.js', 'utf8');
       // mock FS
-      const fsExistStub = sinon.stub(fs, 'existsSync').callsFake((file) => { if (file === '/include.js') { return true; } else { return false; } });
-      const fsReadFileStub = sinon.stub(fs, 'readFileSync').callsFake(() => { return mockFile; });
+      const fsExistStub = sinon.stub(fs, 'existsSync');
+      fsExistStub.withArgs('test/mocks/include.js').returns(true);
+      fsExistStub.returns(false);
 
-      const server = middleware.middleware('', { npm: true, include: ['/include.js'] }, {
+      const fsReadFileStub = sinon.stub(fs, 'readFileSync');
+      fsReadFileStub.withArgs('test/mocks/include.js').returns(mockFile);
+      fsReadFileStub.callThrough();
+
+      const server = middleware.middleware('test/mocks', { npm: true, include: ['/include.js'] }, {
         emit: () => { },
         options: { clientOptions: { root: '/components/' } }
       });
@@ -212,7 +227,7 @@ describe('Middleware', () => {
   describe('supporting Bower', () => {
     it('should call jsTransform with the correct parameters', (done) => {
       const jsTransformSpy = sinon.spy(polymerBuild, 'jsTransform');
-      const server = middleware.middleware('', { npm: false, include: ['/include.js'] }, {
+      const server = middleware.middleware('', { npm: false, include: ['/include.js'], packageName: 'wct-istanbub' }, {
         emit: () => { },
         options: { clientOptions: { root: '/components/' } }
       });
@@ -231,10 +246,15 @@ describe('Middleware', () => {
     it('should instrument the file correctly', (done) => {
       const mockFile = fs.readFileSync('test/mocks/mockHTML.html', 'utf8');
       // mock FS
-      const fsExistStub = sinon.stub(fs, 'existsSync').callsFake((file) => { if (file === '/include.html') { return true; } else { return false; } });
-      const fsReadFileStub = sinon.stub(fs, 'readFileSync').callsFake(() => { return mockFile; });
+      const fsExistStub = sinon.stub(fs, 'existsSync');
+      fsExistStub.withArgs('/include.html').returns(true);
+      fsExistStub.returns(false);
 
-      const server = middleware.middleware('', { npm: false, include: ['/include.html'] }, {
+      const fsReadFileStub = sinon.stub(fs, 'readFileSync');
+      fsReadFileStub.withArgs('/include.html').returns(mockFile);
+      fsReadFileStub.callThrough();
+
+      const server = middleware.middleware('', { npm: false, include: ['/include.html'], packageName: 'wct-istanbub' }, {
         emit: () => { },
         options: { clientOptions: { root: '/components/' } }
       });
@@ -255,7 +275,7 @@ describe('Middleware', () => {
 
     it('should call jsTransform with the correct parameters', (done) => {
       const jsTransformSpy = sinon.spy(polymerBuild, 'jsTransform');
-      const server = middleware.middleware('', { npm: false, include: ['/include.html'] }, {
+      const server = middleware.middleware('', { npm: false, include: ['/include.html'], packageName: 'wct-istanbub' }, {
         emit: () => { },
         options: { clientOptions: { root: '/components/' } }
       });
