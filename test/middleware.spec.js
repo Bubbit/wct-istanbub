@@ -153,7 +153,7 @@ describe('Middleware', () => {
         url: '/components/wct-istanbub/include.js'
       }, {
           type: () => { },
-          send: () => { 
+          send: () => {
             sinon.assert.calledTwice(fsExistStub);
             sinon.assert.calledOnce(fsReadFileStub.withArgs('test/mocks/include.js'));
           }
@@ -175,22 +175,66 @@ describe('Middleware', () => {
   });
 
   describe('supporting NPM', () => {
-    it('should call jsTransform with the correct parameters', (done) => {
-      const jsTransformSpy = sinon.spy(polymerBuild, 'jsTransform');
-      const server = middleware.middleware('', { npm: true, include: ['/include.js'] }, {
-        emit: () => { },
-        options: { clientOptions: { root: '/components/' } }
+    describe('when jsTransform is called with the correct parameters', () => {
+      let jsTransformSpy;
+      beforeEach(() => {
+        jsTransformSpy = sinon.spy(polymerBuild, 'jsTransform');
       });
-      server({ get: () => { }, url: '/components/wct-istanbub/include.js' }, {
-        type: () => { }, send: (response) => {
-          assert.isTrue(polymerBuild.jsTransform.calledOnce);
-          assert.equal(polymerBuild.jsTransform.getCall(0).args[1].componentDir, 'node_modules');
-          assert.equal(polymerBuild.jsTransform.getCall(0).args[1].moduleResolution, 'node');
-          assert.isFalse(polymerBuild.jsTransform.getCall(0).args[1].isComponentRequest);
-          jsTransformSpy.restore();
-          done();
-        }
-      }, () => { });
+
+      afterEach(() => {
+        jsTransformSpy.restore();
+      });
+
+      it('should use moduleResolution node if not set and options are npm', (done) => {
+        const server = middleware.middleware('', { npm: true, include: ['/include.js'] }, {
+          emit: () => { },
+          options: { clientOptions: { root: '/components/' } }
+        });
+        server({ get: () => { }, url: '/components/wct-istanbub/include.js' }, {
+          type: () => { }, send: (response) => {
+            assert.isTrue(polymerBuild.jsTransform.calledOnce);
+            assert.equal(polymerBuild.jsTransform.getCall(0).args[1].componentDir, 'node_modules');
+            assert.equal(polymerBuild.jsTransform.getCall(0).args[1].moduleResolution, 'node');
+            assert.isFalse(polymerBuild.jsTransform.getCall(0).args[1].isComponentRequest);
+            jsTransformSpy.restore();
+            done();
+          }
+        }, () => { });
+      });
+
+      it('should use moduleResolution node if set to node', (done) => {
+        const server = middleware.middleware('', { npm: false, include: ['/include.js'], moduleResolution: 'node' }, {
+          emit: () => { },
+          options: { clientOptions: { root: '/components/' } }
+        });
+        server({ get: () => { }, url: '/components/wct-istanbub/include.js' }, {
+          type: () => { }, send: (response) => {
+            assert.isTrue(polymerBuild.jsTransform.calledOnce);
+            assert.equal(polymerBuild.jsTransform.getCall(0).args[1].componentDir, 'bower_components');
+            assert.equal(polymerBuild.jsTransform.getCall(0).args[1].moduleResolution, 'node');
+            assert.isFalse(polymerBuild.jsTransform.getCall(0).args[1].isComponentRequest);
+            jsTransformSpy.restore();
+            done();
+          }
+        }, () => { });
+      });
+
+      it('should use moduleResolution none if not set and options are not npm', (done) => {
+        const server = middleware.middleware('', { npm: false, include: ['/include.js'] }, {
+          emit: () => { },
+          options: { clientOptions: { root: '/components/' } }
+        });
+        server({ get: () => { }, url: '/components/wct-istanbub/include.js' }, {
+          type: () => { }, send: (response) => {
+            assert.isTrue(polymerBuild.jsTransform.calledOnce);
+            assert.equal(polymerBuild.jsTransform.getCall(0).args[1].componentDir, 'bower_components');
+            assert.equal(polymerBuild.jsTransform.getCall(0).args[1].moduleResolution, 'none');
+            assert.isFalse(polymerBuild.jsTransform.getCall(0).args[1].isComponentRequest);
+            jsTransformSpy.restore();
+            done();
+          }
+        }, () => { });
+      });
     });
 
     it('should instrument the file correctly', (done) => {

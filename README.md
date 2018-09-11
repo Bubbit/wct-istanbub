@@ -74,6 +74,16 @@ all available options.
 
 Don't add the basepath to the include & exclude array's for specific use-cases
 
+### npm
+
+Support for npm based on where to retrieve basic assets from `node_modules` instead of `bower_components`
+
+### moduleResolution
+
+Define support module import (node) or none, allowed values: `node` and `none`
+
+Defaults to `none if npm false` or `node if npm is true` 
+
 ## Coverage Thresholds
 
 In addition to measuring coverage, this plugin can be used to enforce
