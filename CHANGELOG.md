@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.2.6] - 2018-09-10
 ### Added
 - Add support for `importMeta` instrumenting via Istanbul configuration
+- Add support for use of `bower` and module import by adding moduleResolution option
 
 ## [0.2.5] - 2018-07-29
 ### Changed
