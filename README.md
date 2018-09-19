@@ -86,8 +86,8 @@ Defaults to `none if npm false` or `node if npm is true`
 
 ### babelPlugins
 
-Add babel plugins to default set: [`importMeta`, `asyncGenerators`, `dynamicImport`, `objectRestSpread`, `optionalCatchBinding`, `flow`, `jsx`]
-for example [`dotallRegex`], duplicates will be filtered out
+Add babel plugins to default set: [`importMeta`, `asyncGenerators`, `dynamicImport`, `objectRestSpread`, `optionalCatchBinding`, `flow`, `jsx`], 
+for example [`dotallRegex`]. Duplicates will be filtered out
 
 ## Coverage Thresholds
 
