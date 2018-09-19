@@ -3,6 +3,7 @@ const sinon = require('sinon');
 const middleware = require('../lib/middleware');
 const polymerBuild = require('polymer-build');
 const fs = require('fs');
+const istanbulInstrumenter = require('istanbul-lib-instrument');
 
 describe('Middleware', () => {
   afterEach(() => {
@@ -132,6 +133,85 @@ describe('Middleware', () => {
       });
     });
 
+    it('should call createInstrument with default plugins if no set', (done) => {
+      const createInstrumenter = sinon.stub(istanbulInstrumenter, 'createInstrumenter');
+      createInstrumenter.callThrough();
+
+      const server = middleware.middleware('test/mocks', { npm: true, include: ['/include.js'] }, {
+        emit: () => { },
+        options: { clientOptions: { root: '/components/' } }
+      });
+      server({
+        get: () => { return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36' },
+        url: '/components/wct-istanbub/include.js'
+      }, {
+          type: () => { },
+          send: () => {
+            sinon.assert.calledOnce(createInstrumenter.withArgs(sinon.match({
+              autoWrap: true,
+              coverageVariable: 'WCT.share.__coverage__',
+              embedSource: true,
+              compact: false,
+              preserveComments: false,
+              produceSourceMap: false,
+              ignoreClassMethods: undefined,
+              esModules: true,
+              plugins: [
+                'importMeta',
+                'asyncGenerators',
+                'dynamicImport',
+                'objectRestSpread',
+                'optionalCatchBinding',
+                'flow',
+                'jsx'
+              ]
+            })));
+            createInstrumenter.restore();
+            done();
+          }
+        }, () => { });
+    });
+
+    it('should call createInstrument with unique set of plugins if duplicates are set', (done) => {
+      const createInstrumenter = sinon.stub(istanbulInstrumenter, 'createInstrumenter');
+      createInstrumenter.callThrough();
+
+      const server = middleware.middleware('test/mocks', { npm: true, include: ['/include.js'], babelPlugins: ['dotallRegex', 'flow', 'jsx'] }, {
+        emit: () => { },
+        options: { clientOptions: { root: '/components/' } }
+      });
+      server({
+        get: () => { return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36' },
+        url: '/components/wct-istanbub/include.js'
+      }, {
+          type: () => { },
+          send: () => {
+            sinon.assert.calledOnce(createInstrumenter.withArgs(sinon.match({
+              autoWrap: true,
+              coverageVariable: 'WCT.share.__coverage__',
+              embedSource: true,
+              compact: false,
+              preserveComments: false,
+              produceSourceMap: false,
+              ignoreClassMethods: undefined,
+              esModules: true,
+              plugins: [
+                'importMeta',
+                'asyncGenerators',
+                'dynamicImport',
+                'objectRestSpread',
+                'optionalCatchBinding',
+                'flow',
+                'jsx',
+                'dotallRegex'
+              ]
+            })));
+            createInstrumenter.restore();
+            done();
+          }
+        }, () => { });
+    });
+
     it('should save the file in cache', (done) => {
       const mockFile = fs.readFileSync('test/mocks/mockJS.js', 'utf8');
 
@@ -154,7 +234,7 @@ describe('Middleware', () => {
       }, {
           type: () => { },
           send: () => {
-            sinon.assert.calledTwice(fsExistStub);
+            sinon.assert.calledOnce(fsExistStub);
             sinon.assert.calledOnce(fsReadFileStub.withArgs('test/mocks/include.js'));
           }
         }, () => { });
@@ -164,7 +244,7 @@ describe('Middleware', () => {
       }, {
           type: () => { },
           send: (response) => {
-            sinon.assert.calledThrice(fsExistStub);
+            sinon.assert.calledTwice(fsExistStub);
             sinon.assert.calledOnce(fsReadFileStub.withArgs('test/mocks/include.js'));
             fsExistStub.restore();
             fsReadFileStub.restore();
