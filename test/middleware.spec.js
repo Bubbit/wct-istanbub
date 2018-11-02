@@ -412,4 +412,102 @@ describe('Middleware', () => {
       }, () => { });
     });
   });
+
+  describe('Source Maps', () => {
+    it('should be loaded if valid', (done) => {
+      const mockJsFile = fs.readFileSync('test/mocks/mockMapped.js', 'utf8');
+      const mockMapFile = fs.readFileSync('test/mocks/mockMapped.js.map', 'utf8');
+      // mock FS
+      const fsExistStub = sinon.stub(fs, 'existsSync');
+      fsExistStub.withArgs('test/mocks/mockMapped.js').returns(true);
+      fsExistStub.withArgs('test/mocks/mockMapped.js.map').returns(true);
+      fsExistStub.returns(false);
+
+      const fsReadFileStub = sinon.stub(fs, 'readFileSync');
+      fsReadFileStub.withArgs('test/mocks/mockMapped.js').returns(mockJsFile);
+      fsReadFileStub.withArgs('test/mocks/mockMapped.js.map').returns(mockMapFile);
+      fsReadFileStub.callThrough();
+
+      const server = middleware.middleware('test/mocks', { npm: true, include: ['/mockMapped.js'] }, {
+        emit: () => { },
+        options: { clientOptions: { root: '/components/' } }
+      });
+      server({
+        get: () => { return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36' },
+        url: '/components/wct-istanbub/mockMapped.js'
+      }, {
+          type: () => { },
+          send: (response) => {
+            assert.include(response, 'inputSourceMap: {');
+            assert.include(response, 'mockMapped.ts');
+            fsExistStub.restore();
+            fsReadFileStub.restore();
+            done();
+          }
+        }, () => { });
+    });
+
+    it('should not be loaded if map file does not exist', (done) => {
+      const mockJsFile = fs.readFileSync('test/mocks/mockMapped.js', 'utf8');
+
+      // mock FS
+      const fsExistStub = sinon.stub(fs, 'existsSync');
+      fsExistStub.withArgs('test/mocks/mockMapped.js').returns(true);
+      fsExistStub.withArgs('test/mocks/mockMapped.js.map').returns(false);
+      fsExistStub.returns(false);
+
+      const fsReadFileStub = sinon.stub(fs, 'readFileSync');
+      fsReadFileStub.withArgs('test/mocks/mockMapped.js').returns(mockJsFile);
+      fsReadFileStub.callThrough();
+
+      const server = middleware.middleware('test/mocks', { npm: true, include: ['/mockMapped.js'] }, {
+        emit: () => { },
+        options: { clientOptions: { root: '/components/' } }
+      });
+      server({
+        get: () => { return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36' },
+        url: '/components/wct-istanbub/mockMapped.js'
+      }, {
+          type: () => { },
+          send: (response) => {
+            assert.notInclude(response, 'inputSourceMap');
+            fsExistStub.restore();
+            fsReadFileStub.restore();
+            done();
+          }
+        }, () => { });
+    });
+
+    it('should not be loaded if map file is invalid', (done) => {
+      const mockJsFile = fs.readFileSync('test/mocks/mockMapped.js', 'utf8');
+
+      // mock FS
+      const fsExistStub = sinon.stub(fs, 'existsSync');
+      fsExistStub.withArgs('test/mocks/mockMapped.js').returns(true);
+      fsExistStub.withArgs('test/mocks/mockMapped.js.map').returns(true);
+      fsExistStub.returns(false);
+
+      const fsReadFileStub = sinon.stub(fs, 'readFileSync');
+      fsReadFileStub.withArgs('test/mocks/mockMapped.js').returns(mockJsFile);
+      fsReadFileStub.withArgs('test/mocks/mockMapped.js.map').returns("foo");
+      fsReadFileStub.callThrough();
+
+      const server = middleware.middleware('test/mocks', { npm: true, include: ['/mockMapped.js'] }, {
+        emit: () => { },
+        options: { clientOptions: { root: '/components/' } }
+      });
+      server({
+        get: () => { return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36' },
+        url: '/components/wct-istanbub/mockMapped.js'
+      }, {
+          type: () => { },
+          send: (response) => {
+            assert.notInclude(response, 'inputSourceMap');
+            fsExistStub.restore();
+            fsReadFileStub.restore();
+            done();
+          }
+        }, () => { });
+    });
+  })
 });
