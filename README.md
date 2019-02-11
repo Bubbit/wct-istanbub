@@ -84,6 +84,10 @@ Define support module import (node) or none, allowed values: `node` and `none`
 
 Defaults to `none if npm false` or `node if npm is true` 
 
+### isComponentRequestOverride
+
+Override the componentRequest check
+
 ### babelPlugins
 
 Add babel plugins to default set: [`importMeta`, `asyncGenerators`, `dynamicImport`, `objectRestSpread`, `optionalCatchBinding`, `flow`, `jsx`], 
