@@ -1,0 +1,10 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.13.3
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:lodash:20180130':
+    - web-component-tester > lodash:
+        patched: '2019-05-16T08:59:49.909Z'
+    - web-component-tester > stacky > lodash:
+        patched: '2019-05-16T08:59:49.909Z'
